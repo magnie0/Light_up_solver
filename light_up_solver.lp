@@ -5,59 +5,76 @@ coordinates(3,2,1).
 coordinates(5,1,1).
 coordinates(1,4,1).
 coordinates(5,5,1).
-%block(X,Y,Neighbors)
+%block(X,Y,Neighbours)
 block(1,1,0).
 block(3,2,1).
 block(5,1,2).
 block(1,4,2).
-block(5,4,0).
+block(5,5,0).
+col(5).
+row(5).
 %hardcode for now
 
 
-%all coords for page
-coords(1..n,1..n).
-must_be_light(X,Y) :- coords(X,Y), not coordinates(X,Y,1).
-coordinates(X,Y,0) :- must_be_light(X,Y), not coordinates(X,Y,1). %pottrzebujemy żeby zdefiniować do tego zapalania
+%   bulb and block are identified by a pair (X,Y) where X is for column, Y for row
 
-{ bulb(X,Y) : must_be_light(X,Y) }.
-:- not 6 { bulb(X,Y) } 6. % jak bez tego to robi się minimum
-%lights(XBulb_id,YBulb_id,)
+
+%   all coords for page
+coords(1..X,1..Y) :- col(X), row(Y).
+%   coordinates(X,Y,Block) is Block = 1 when it's block if empty 0 on (X,Y)
+must_be_lighted(X,Y) :- coords(X,Y), not coordinates(X,Y,1).
+coordinates(X,Y,0) :- must_be_lighted(X,Y), not coordinates(X,Y,1).
+
+
+%   bulb can only be at places too light up but we don't know how many we need
+{ bulb(X,Y) : must_be_lighted(X,Y) }.
+
+%   lights(XBulb,YBulb, X,Y) where Bulb(XBulb,YBulb) lights coords X,Y
 lights_row(XB,YB,X,Y) :- bulb(X,Y), X = XB, Y = YB.
 lights_col(XB,YB,X,Y) :- bulb(X,Y), X = XB, Y = YB.
-%lights_col(XB,YB,X,Y) :- lights_col(XB,YB, X1,Y), X=X1+1, X<= n, not coordinates(X,Y,1).
-%lights_col(XB,YB,X,Y) :- lights_col(XB,YB, X1,Y), X=X1-1, X>= 1, not coordinates(X,Y,1).
-%lights_row(XB,YB,X,Y) :- lights_row(XB,YB, X,Y1), Y=Y1+1, Y<= n, not coordinates(X,Y,1).
-%lights_row(XB,YB,X,Y) :- lights_row(XB,YB, X,Y1), Y=Y1-1, Y>= 1, not coordinates(X,Y,1).
-lights_col(XB,YB,X,Y) :- lights_col(XB,YB, X1,Y), X=X1+1, X<= n, coordinates(X,Y,0).
+lights_col(XB,YB,X,Y) :- lights_col(XB,YB, X1,Y), X=X1+1, X<= C, col(C), coordinates(X,Y,0).
 lights_col(XB,YB,X,Y) :- lights_col(XB,YB, X1,Y), X=X1-1, X>= 1, coordinates(X,Y,0).
-lights_row(XB,YB,X,Y) :- lights_row(XB,YB, X,Y1), Y=Y1+1, Y<= n, coordinates(X,Y,0).
+lights_row(XB,YB,X,Y) :- lights_row(XB,YB, X,Y1), Y=Y1+1, Y<= R, row(R), coordinates(X,Y,0).
 lights_row(XB,YB,X,Y) :- lights_row(XB,YB, X,Y1), Y=Y1-1, Y>= 1, coordinates(X,Y,0).
 lights(XB,YB,X,Y) :- lights_col(XB,YB,X,Y).
 lights(XB,YB,X,Y) :- lights_row(XB,YB,X,Y).
 
-
-unique(XB,YB,X,Y):-lights(XB,YB,X,Y),lights(XB2,YB2,X1,Y1), XB1 = XB2, YB1 = YB2,X = X1, Y=Y1.
-
+%   error(X,Y) is when coordinates X,Y are lit by more than one bulb
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB=XB1, YB!=YB1.
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB=YB1.
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB!=YB1.
-%no errors it should not be the case there are not 0 errors
+%   there should not be any errors
 :- not 0{error(X,Y)}0.
 
-%all X,Y must be lighten !!!!!!!
+
+%   all coords that are lighted
 lighted_coords (X,Y) :- lights(_,_,X,Y).
-%every must_be_light is lighted by exactly one
-%1{lights(X,Y)}1 :- must_be_light(X,Y).
+%   checking if all board is lit up
+:- lighted_coords(X,Y), not must_be_lighted(X,Y).
+:- not lighted_coords(X,Y), must_be_lighted(X,Y).
 
 
-:- lighted_coords(X,Y), not must_be_light(X,Y).
-:- not lighted_coords(X,Y), must_be_light(X,Y).
-%no all are lighten
 
-%#show bulb/2.
-#show must_be_light/2.
-#show lighted_coords/2.
 
+%XBlock, YBlock has neighbour XBulb, YBulb.
+neighbours(XBlock, YBlock, XBulb, YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock + 1 = XBulb, YBlock = YBulb, XBulb <= C, col(C).
+neighbours(XBlock, YBlock, XBulb, YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock - 1 = XBulb, YBlock = YBulb, XBulb >= 1.
+neighbours(XBlock, YBlock, XBulb, YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock = XBulb, YBlock + 1 = YBulb, YBulb <= R, row(R).
+neighbours(XBlock, YBlock, XBulb, YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock = XBulb, YBlock - 1 = YBulb, YBulb >= 1.
+
+
+
+%neighbours_count(XBl,YBl, N) how many Block Xbl, Ybl has bulbs (N)
+neighbours_count(XBl,YBl,K):- block(XBl,YBl,_), #count{bulb(XBulb,YBulb) :neighbours(X,Y,XBulb, YBulb), X = XBl, Y = YBl} = K.
+:- neighbours_count(X,Y,N1), block(X,Y,N2), N1 != N2.
+
+
+#show neighbours_count/3.
+#show bulb/2.
+
+%#show neighbours/4.
+%#show must_be_lighted/2.
+%#show lighted_coords/2.
 %#show error/2.
 
 
