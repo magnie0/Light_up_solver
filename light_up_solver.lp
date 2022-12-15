@@ -57,24 +57,19 @@ lighted_coords (X,Y) :- lights(_,_,X,Y).
 
 
 %XBlock, YBlock has neighbour XBulb, YBulb.
-neighbours(XBlock, YBlock, XBulb, YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock + 1 = XBulb, YBlock = YBulb, XBulb <= C, col(C).
-neighbours(XBlock, YBlock, XBulb, YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock - 1 = XBulb, YBlock = YBulb, XBulb >= 1.
-neighbours(XBlock, YBlock, XBulb, YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock = XBulb, YBlock + 1 = YBulb, YBulb <= R, row(R).
-neighbours(XBlock, YBlock, XBulb, YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock = XBulb, YBlock - 1 = YBulb, YBulb >= 1.
+neighbours(XBlock,YBlock,XBulb,YBulb) :- block(XBlock, YBlock,_),bulb(XBulb,YBulb), XBlock + 1 = XBulb, YBlock = YBulb, XBulb <= C, col(C).
+neighbours(XBlock,YBlock,XBulb,YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock - 1 = XBulb, YBlock = YBulb, XBulb >= 1.
+neighbours(XBlock,YBlock,XBulb,YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock = XBulb, YBlock + 1 = YBulb, YBulb <= R, row(R).
+neighbours(XBlock,YBlock,XBulb,YBulb) :- block(XBlock,YBlock,_),bulb(XBulb,YBulb), XBlock = XBulb, YBlock - 1 = YBulb, YBulb >= 1.
 
 
 
-%neighbours_count(XBl,YBl, N) how many Block Xbl, Ybl has bulbs (N)
-neighbours_count(XBl,YBl,K):- block(XBl,YBl,_), #count{bulb(XBulb,YBulb) :neighbours(X,Y,XBulb, YBulb), X = XBl, Y = YBl} = K.
+%   neighbours_count(XBl,YBl,N) how many Block Xbl, Ybl has bulbs (N)
+neighbours_count(XBl,YBl,N):- block(XBl,YBl,_), #count{bulb(XBulb,YBulb) :neighbours(X,Y,XBulb, YBulb), X = XBl, Y = YBl} = N.
+%   it has be equal to number in block
 :- neighbours_count(X,Y,N1), block(X,Y,N2), N1 != N2.
 
 
-#show neighbours_count/3.
 #show bulb/2.
-
-%#show neighbours/4.
-%#show must_be_lighted/2.
-%#show lighted_coords/2.
-%#show error/2.
 
 
