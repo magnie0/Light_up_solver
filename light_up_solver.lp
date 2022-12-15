@@ -41,14 +41,23 @@ unique(XB,YB,X,Y):-lights(XB,YB,X,Y),lights(XB2,YB2,X1,Y1), XB1 = XB2, YB1 = YB2
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB=XB1, YB!=YB1.
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB=YB1.
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB!=YB1.
-#show error/2.
+%no errors it should not be the case there are not 0 errors
 :- not 0{error(X,Y)}0.
-%#show coordinates/3.
-%#show unique/4. 
-#show bulb/2.
 
-%#show must_be_light/2.
+%all X,Y must be lighten !!!!!!!
+lighted_coords (X,Y) :- lights(_,_,X,Y).
+%every must_be_light is lighted by exactly one
+%1{lights(X,Y)}1 :- must_be_light(X,Y).
 
-%#show lights/4.
+
+:- lighted_coords(X,Y), not must_be_light(X,Y).
+:- not lighted_coords(X,Y), must_be_light(X,Y).
+%no all are lighten
+
+%#show bulb/2.
+#show must_be_light/2.
+#show lighted_coords/2.
+
+%#show error/2.
 
 
