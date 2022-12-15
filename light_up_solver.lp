@@ -52,5 +52,4 @@ neighbours_count(XBl,YBl,N):- block(XBl,YBl,_), #count{bulb(XBulb,YBulb) :neighb
 :- neighbours_count(X,Y,N1), block(X,Y,N2), N1 != N2.
 
 
-
 #show bulb/2.
