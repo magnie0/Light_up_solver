@@ -1,21 +1,3 @@
-%hardcode for now n -size in command line
-%coordinates(X,Y,Block) is Block = 1 when it's block if empty 0
-coordinates(1,1,1).
-coordinates(3,2,1).
-coordinates(5,1,1).
-coordinates(1,4,1).
-coordinates(5,5,1).
-%block(X,Y,Neighbours)
-block(1,1,0).
-block(3,2,1).
-block(5,1,2).
-block(1,4,2).
-block(5,5,0).
-col(5).
-row(5).
-%hardcode for now
-
-
 %   bulb and block are identified by a pair (X,Y) where X is for column, Y for row
 
 
@@ -70,6 +52,5 @@ neighbours_count(XBl,YBl,N):- block(XBl,YBl,_), #count{bulb(XBulb,YBulb) :neighb
 :- neighbours_count(X,Y,N1), block(X,Y,N2), N1 != N2.
 
 
+
 #show bulb/2.
-
-
