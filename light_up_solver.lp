@@ -38,11 +38,6 @@ lights(XB,YB,X,Y) :- lights_row(XB,YB,X,Y).
 
 unique(XB,YB,X,Y):-lights(XB,YB,X,Y),lights(XB2,YB2,X1,Y1), XB1 = XB2, YB1 = YB2,X = X1, Y=Y1.
 
-%error the same are lighting by different bulbs
-%error(X,Y) :- lights(XB1, YB1, X,Y), lights(XB2,YB2,X,Y), XB1 != XB2, YB1 = YB2.
-%error(X,Y) :- lights(XB1, YB1, X,Y), lights(XB2,YB2,X,Y), XB1 != XB2, YB1 != YB2.
-%error(X,Y) :- lights(XB1, YB1, X,Y), lights(XB2,YB2,X,Y), XB1 = XB2, YB1 != YB2.
-
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB=XB1, YB!=YB1.
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB=YB1.
 error(X,Y) :- lights(XB,YB,X,Y), bulb(XB1,YB1), X=XB1, Y=YB1, XB!=XB1, YB!=YB1.
